@@ -71,16 +71,16 @@ class _CliParser():
             parser.print_help(sys.stderr)
             sys.exit(2)
 
-    def kmeans(self, args):
+    def kmeans_template(self, args, func):
         """Run the kmeans command
         """
         import csv
         dataset = read.read_csv(args.dataset_file)
-        clustering = kmeans.k_means(dataset=dataset, k=int(args.k))
+        clustering = func(dataset=dataset, k=int(args.k))
         cost = kmeans.cost_function(clustering)
 
         for _ in range(100):
-            new_clustering = kmeans.k_means(dataset=dataset, k=int(args.k))
+            new_clustering = func(dataset=dataset, k=int(args.k))
             new_cost = kmeans.cost_function(clustering)
             if new_cost < cost:
                 clustering = new_clustering
@@ -93,3 +93,9 @@ class _CliParser():
                 print("assignement ", assignment, " is: ", clustering[assignment])
                 writer.writerows(clustering[assignment])
             f.close()
+
+    def kmeans(self, args, func=kmeans_template):
+        func(self, args, kmeans.k_means)
+
+    def kmeans_pp(self, args, func=kmeans_template):
+        func(self, args, kmeans.k_means_pp)

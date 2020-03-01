@@ -12,6 +12,7 @@ def point_avg(points):
     
     Returns a new point which is the center of all the points.
     """
+<<<<<<< HEAD
     #raise NotImplementedError()
 
     res = []
@@ -31,6 +32,12 @@ def point_avg(points):
         res.append(sum_i/len(points))
 
     return res
+=======
+    n = len(points)
+    x = sum([p[0] for p in points]) / n
+    y = sum([p[1] for p in points]) / n
+    return [x, y]
+>>>>>>> upstream/master
 
 
 def update_centers(dataset, assignments):
@@ -40,6 +47,7 @@ def update_centers(dataset, assignments):
     Compute the center for each of the assigned groups.
     Return `k` centers in a list
     """
+<<<<<<< HEAD
     #raise NotImplementedError()
 
     centers = [];
@@ -66,7 +74,18 @@ def unique(list1):
             unique_list.append(x)
             # print list
     return unique_list;
+=======
+    k = max(assignments) + 1
+    clusters = [[] for i in range(k)]
+    for pointIndex, pointAssignment in enumerate(assignments):
+        clusters[pointAssignment].append(dataset[pointIndex])
+>>>>>>> upstream/master
 
+    new_centers = []
+    for cluster in clusters:
+        new_centers.append(point_avg(cluster))
+
+    return new_centers
 
 def assign_points(data_points, centers):
     """
@@ -89,6 +108,7 @@ def distance(a, b):
     """
     Returns the Euclidean distance between a and b
     """
+<<<<<<< HEAD
     #raise NotImplementedError()
 
     return sim.euclidean_dist(a,b)
@@ -100,6 +120,12 @@ def distance(a, b):
     #return sumSQ**(1/2)
 
 
+=======
+    return sum([(a - b) ** 2 for a, b in zip(a, b)]) ** 0.5
+
+def distance_squared(a, b):
+    return distance(a, b) ** 2
+>>>>>>> upstream/master
 
 
 def generate_k(dataset, k):
@@ -107,6 +133,7 @@ def generate_k(dataset, k):
     Given `data_set`, which is an array of arrays,
     return a random set of k points from the data_set
     """
+<<<<<<< HEAD
 
 
     sampling = random.choices(dataset, k=k)
@@ -162,6 +189,35 @@ def generate_k_pp(dataset, k):
 
     return centers
 
+=======
+    return random.sample(dataset, k)
+
+
+def cost_function(clustering):
+    cost = 0
+    for idx in clustering:
+        center = point_avg(clustering[idx])
+        cost += sum([distance_squared(center, p) for p in clustering[idx]])
+
+    return cost
+
+
+def generate_k_pp(dataset, k):
+    center = random.choice(dataset)
+    k_points = [center]
+
+    while len(k_points) < k:
+        prob = []
+        for point in dataset:
+            prob.append(distance_squared(center, point))
+        
+        prob = [p/sum(prob) for p in prob]
+        center = random.choices(dataset, prob)[0]
+
+        k_points.append(center)
+
+    return k_points
+>>>>>>> upstream/master
 
 
 def _do_lloyds_algo(dataset, k_points):
@@ -178,10 +234,16 @@ def _do_lloyds_algo(dataset, k_points):
 
 
 def k_means(dataset, k):
+    if k not in range(1, len(dataset)+1):
+        raise ValueError("lengths must be in [1, len(dataset)]")
+    
     k_points = generate_k(dataset, k)
     return _do_lloyds_algo(dataset, k_points)
 
 
 def k_means_pp(dataset, k):
+    if k not in range(1, len(dataset)+1):
+        raise ValueError("lengths must be in [1, len(dataset)]")
+
     k_points = generate_k_pp(dataset, k)
     return _do_lloyds_algo(dataset, k_points)
