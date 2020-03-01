@@ -14,6 +14,7 @@ def clustered_all_points(clustering, dataset):
     return True
 
 
+
 @pytest.mark.parametrize('datasetPath', [
     ("tests/test_files/dataset_1.csv"),
 ])
@@ -90,3 +91,5 @@ def test_kmeans_when_k_is_3(datasetPath, expected1, expected2, expected3):
     for assignment in clustering:
         clustered.append(clustering[assignment])
     assert clustered == [expected_clustering1, expected_clustering2, expected_clustering3]
+
+
